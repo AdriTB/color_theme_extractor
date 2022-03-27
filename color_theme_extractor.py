@@ -45,7 +45,7 @@ class ThemeExtractor:
     def __extract_all_colors(self):
         width, heigth = self.image.size
         colors = self.image.getcolors(width * heigth)
-        print(f"Format of color: {colors}")
+        #print(f"Format of color: {colors}")
         #print(f"Find {len(colors)} colors in that image")
         colors.sort()
         colors.reverse()
