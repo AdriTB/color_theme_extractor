@@ -5,7 +5,7 @@ Extract main colors of an image
 ## Use
 Example of use: 
   $python color_theme.py 'path/to/image.png' 3\
-  -> Returns three main colors of the image\
+  >> Returns three main colors of the image\
 
 ## Info
 Suports .png and .jpeg\
