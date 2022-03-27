@@ -1,4 +1,4 @@
-# Color theme extractor
+# Color theme extractor 🖌️ 
 ## Description
 Extract main colors of an image
 
