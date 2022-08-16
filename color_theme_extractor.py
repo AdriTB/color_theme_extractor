@@ -6,7 +6,6 @@
 #If not specifing number of colors takes five by default
 #Suports .png and .jpeg
 
-from turtle import clear
 import pandas as pd
 from PIL import Image
 import pyTextColor
@@ -94,7 +93,7 @@ def main():
             #Method Image.getpalette()
             extractor = ThemeExtractor(image)
             print('...getting theme')
-            extractor.theme(max_colors,show_image=True,show_graph=False)
+            extractor.theme(max_colors,show_image=True,show_graph=True)
             extractor.show_theme()
             image.close()
         except FileNotFoundError:
