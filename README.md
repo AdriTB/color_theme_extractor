@@ -8,8 +8,8 @@ Example of use:
   > Returns three main colors of the image
 
 ## Info
-- Suports .png and .jpeg\
-- Up to eight colors theme\
+- Suports .png and .jpeg
+- Up to eight colors theme
 - If not specifing number of colors takes five by default
 #
 #### <i>Hope it's helpful for you</i>
