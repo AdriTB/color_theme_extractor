@@ -12,6 +12,11 @@ import pyTextColor
 import sys
 import plot3D
 from sklearn import cluster
+from scipy.spatial import distance
+import warnings
+
+warnings.filterwarnings('ignore')
+
 
 class ThemeExtractor:    
 
@@ -34,7 +39,7 @@ class ThemeExtractor:
         return df
 
     #Extract all colors and sort by frequency
-    def __get_colors(self):
+    def __get_colors(self, max):
         heigth,width = self.image.size
         colors = self.image.getcolors(width * heigth)
         with_alpha = len(colors[0][1]) == 4
@@ -42,25 +47,35 @@ class ThemeExtractor:
         if with_alpha:
             df_colors = self.__remove_alpha_colors(df_colors)
         # Optimize for large lists of colors
-        col_count = df_colors.count()[0]
-        max_colors = col_count // 10 if col_count // 10 > 8 else col_count
-        
-        return df_colors.sort_values('freq',ascending=False).head(max_colors)
+        # print(len(df_colors))
+
+        return df_colors[df_colors['freq'] > df_colors['freq'].mean()/(max)].sort_values('freq', ascending=False)
 
     #Main extract method
     def theme(self, max,show_graph=False,show_image=False)->list:
         #Get all colors and format it
-        all_colors = self.__get_colors()
-        #print(all_colors.head(10))
+        df_colors = self.__get_colors(max)
+        all_colors = list(df_colors['color'].values)
+        # print(df_colors.count())
+
         # Clustering colors as 3D points
         kmeans = cluster.KMeans(n_clusters=max)
-        kmeans.fit(list(all_colors['color'].values))
+        kmeans.fit(all_colors)
         filtered_colors = kmeans.cluster_centers_
-        self.main_colors = filtered_colors
+        # print(filtered_colors)
+        df_colors = pd.concat([df_colors,pd.DataFrame({'color':[tuple(x) for x in filtered_colors], 'freq':[100000]*len(filtered_colors)})])
+        clo_col_index = distance.cdist(filtered_colors, all_colors)
+
+        self.main_colors = [all_colors[x.argmin()] for x in clo_col_index]
+        # self.main_colors = filtered_colors
+        
         # Show image option
-        if show_image: self.image.show()
+        if show_image: 
+            self.image.show()
+        
         # Show plot 3D option
-        if show_graph: plot3D.show_data(all_colors)
+        if show_graph: 
+            plot3D.show_data(df_colors)
         return self.main_colors
     
     #Show main colors
@@ -88,17 +103,17 @@ def main():
             max_colors = int(sys.argv[2]) if len(sys.argv) == 3 else 5
             if(max_colors <= 0 or max_colors > 8):
                 raise ValueError
+            print('...getting theme')
             image = Image.open(path)
             #TODO Check if image is in P mode (mapping a palette)
             #Method Image.getpalette()
             extractor = ThemeExtractor(image)
-            print('...getting theme')
-            extractor.theme(max_colors,show_image=True,show_graph=True)
+            extractor.theme(max_colors,show_image=False,show_graph=True)
             extractor.show_theme()
             image.close()
         except FileNotFoundError:
             print("File not found")
-        except ValueError:
+        except ValueError as e:
             print("Value of number of colors invalid")
             print("Enter a number between 1 and 8")
 
