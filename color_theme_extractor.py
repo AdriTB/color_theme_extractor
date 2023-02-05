@@ -51,7 +51,7 @@ class ThemeExtractor:
     def theme(self, max,show_graph=False,show_image=False)->list:
         #Get all colors and format it
         all_colors = self.__get_colors()
-        print(all_colors.head(10))
+        #print(all_colors.head(10))
         # Clustering colors as 3D points
         kmeans = cluster.KMeans(n_clusters=max)
         kmeans.fit(list(all_colors['color'].values))
